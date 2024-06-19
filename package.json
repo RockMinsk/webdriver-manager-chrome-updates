@@ -1,6 +1,6 @@
 {
   "name": "webdriver-manager-chrome-updates",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A selenium server and browser driver manager for your end to end tests.",
   "scripts": {
     "format": "gulp format",
