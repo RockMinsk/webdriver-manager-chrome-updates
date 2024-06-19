@@ -1,5 +1,5 @@
 
-Webdriver Manager fork wiht updates for ChromeDriver version 115 and higher
+Webdriver Manager fork with updates for ChromeDriver version 115 and higher
 =================
 
 **Notes:**
