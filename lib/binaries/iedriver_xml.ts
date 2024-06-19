@@ -19,7 +19,7 @@ export class IEDriverXml extends XmlConfigSource {
   }
 
   getVersionList(): Promise<string[]> {
-    return this.getXml().then(xml => {
+    return this.getContent().then(xml => {
       let versionPaths: string[] = [];
 
       for (let content of xml.ListBucketResult.Contents) {

@@ -1,10 +1,12 @@
 
-Webdriver Manager [![CircleCI Status](https://circleci.com/gh/angular/webdriver-manager.svg?style=shield)](https://circleci.com/gh/angular/webdriver-manager) [![Join the chat at https://gitter.im/angular/webdriver-manager](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/angular/webdriver-manager?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+Webdriver Manager fork wiht updates for ChromeDriver version 115 and higher
 =================
 
-A selenium server and browser driver manager for your end to end tests. This is the same tool as `webdriver-manager` from the [Protractor](https://github.com/angular/protractor) repository.
+**Notes:**
+ - this is a fork of the [Webdriver Manager](https://www.npmjs.com/package/webdriver-manager) updated to use ChromeDriver v.115 and higher.
+ - only latest released versions per milestone can be used - [ChromeDriver versions](https://googlechromelabs.github.io/chrome-for-testing/latest-versions-per-milestone-with-downloads.json).
 
-**Note:** Version 9 and lower please reference [pose/webdriver-manager](https://github.com/pose/webdriver-manager). If there are features that existed in version 9 and lower, please open up an issue with the missing feature or a create a pull request.
+A selenium server and browser driver manager for your end to end tests. This is the same tool as `webdriver-manager` from the [Protractor](https://github.com/angular/protractor) repository.
 
 Getting Started
 ---------------
@@ -67,10 +69,3 @@ webdriver-manager start help
 webdriver-manager clean help
 webdriver-manager status help
 ```
-
-Other topics:
---------------
-
-- [mobile browser support](docs/mobile.md)
-- [protractor support](docs/protractor.md)
-- [set specific versions](docs/versions.md)

@@ -1,6 +1,6 @@
 {
   "name": "webdriver-manager",
-  "version": "12.1.9",
+  "version": "12.2.0",
   "description": "A selenium server and browser driver manager for your end to end tests.",
   "scripts": {
     "format": "gulp format",
@@ -30,13 +30,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/angular/webdriver-manager.git"
+    "url": "git://github.com/RockMinsk/webdriver-manager-chrome-updates.git"
   },
   "bin": {
     "webdriver-manager": "bin/webdriver-manager"
   },
   "main": "built/lib/webdriver.js",
-  "author": "Craig Nishina <craig.nishina@gmail.com>",
+  "authors": [
+    "Craig Nishina <craig.nishina@gmail.com>",
+    "Kiryl Shytsikau <shytsikau.kiryl@gmail.com>"
+  ],
   "license": "MIT",
   "dependencies": {
     "adm-zip": "^0.5.2",

@@ -13,7 +13,7 @@ export class XMLConfig extends XmlConfigSource {
     return null;
   }
   testGetXml(): Promise<any> {
-    return this.getXml();
+    return this.getContent();
   }
 }
 

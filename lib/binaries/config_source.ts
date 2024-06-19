@@ -25,25 +25,31 @@ export abstract class XmlConfigSource extends ConfigSource {
     super();
   }
 
-  protected getFileName(): string {
+  protected getFileName(fileFormat: 'xml'|'json' = 'xml'): string {
     try {
       fs.statSync(this.out_dir);
     } catch (e) {
       fs.mkdirSync(this.out_dir);
     }
-    return path.resolve(this.out_dir, this.name + '-response.xml');
+    return path.resolve(this.out_dir, `${this.name}-response.${fileFormat}`);
   }
 
-  protected getXml(): Promise<any> {
-    let fileName = this.getFileName();
+  protected getContent(responseFormat: 'xml'|'json' = 'xml'): Promise<any> {
+    let fileName: string = this.getFileName(responseFormat);
+    // let fileName: string = this.getFileName();
     let content = this.readResponse();
     if (content) {
       return Promise.resolve(content);
     } else {
       return this.requestXml().then(text => {
-        let xml = this.convertXml2js(text);
-        fs.writeFileSync(fileName, text);
-        return xml;
+        let convertedText: string = text;
+        if (responseFormat === 'xml') {
+          convertedText = this.convertXml2js(text);
+          fs.writeFileSync(fileName, text);
+        } else {
+          fs.writeFileSync(fileName, JSON.stringify(text));
+        }
+        return convertedText;
       });
     }
   }

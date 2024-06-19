@@ -1,5 +1,3 @@
-import * as semver from 'semver';
-
 import {Config} from '../config';
 import {requestBody} from '../http_utils';
 
@@ -25,21 +23,29 @@ export class ChromeXml extends XmlConfigSource {
    * Get a list of chrome drivers paths available for the configuration OS type and architecture.
    */
   getVersionList(): Promise<string[]> {
-    return this.getXml().then(xml => {
+    return this.getContent('json').then(response => {
       let versionPaths: string[] = [];
       let osType = this.getOsTypeName();
 
-      for (let content of xml.ListBucketResult.Contents) {
-        let contentKey: string = content.Key[0];
+      let json = JSON.parse(response);
 
-        if (
-            // Filter for 32-bit devices, make sure x64 is not an option
-            (this.osarch.includes('64') || !contentKey.includes('64')) &&
-            // Filter for x86 macs, make sure m1 is not an option
-            ((this.ostype === 'Darwin' && this.osarch === 'arm64') || !contentKey.includes('m1'))) {
-          // Filter for only the osType
-          if (contentKey.includes(osType)) {
-            versionPaths.push(contentKey);
+      for (let milestone in json.milestones) {
+        const milestoneData = json.milestones[milestone];
+        const downloads = milestoneData.downloads;
+        if ('chromedriver' in downloads) {
+          for (let download of downloads.chromedriver) {
+            let platform: string = download.platform;
+            if (
+                // Filter for 32-bit devices, make sure x64 is not an option
+                (this.osarch.includes('64') || !platform.includes('64')) &&
+                // Filter for x86 macs, make sure m1 is not an option
+                ((this.ostype === 'Darwin' && this.osarch === 'arm64') ||
+                 !platform.includes('m1'))) {
+              // Filter for only the osType
+              if (platform.includes(osType)) {
+                versionPaths.push(download.url);
+              }
+            }
           }
         }
       }
@@ -61,11 +67,23 @@ export class ChromeXml extends XmlConfigSource {
     }
   }
 
+  getOsArmName() {
+    // Get the os type name.
+    if (this.ostype === 'Darwin') {
+      return this.osarch === 'x64' ? 'x64' : 'arm64';
+    } else if (this.ostype === 'Windows_NT') {
+      return this.osarch === 'x64' ? 'win64' : 'win32';
+    } else {
+      return 'linux64';
+    }
+  }
+
   /**
    * Gets the latest item from the XML.
    */
   private getLatestChromeDriverVersion(): Promise<BinaryUrl> {
-    const latestReleaseUrl = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE';
+    const latestReleaseUrl =
+        'https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE';
     return requestBody(latestReleaseUrl).then(latestVersion => {
       return this.getSpecificChromeDriverVersion(latestVersion);
     });
@@ -76,50 +94,24 @@ export class ChromeXml extends XmlConfigSource {
    */
   private getSpecificChromeDriverVersion(inputVersion: string): Promise<BinaryUrl> {
     return this.getVersionList().then(list => {
-      const specificVersion = getValidSemver(inputVersion);
-      if (specificVersion === '') {
-        throw new Error(`version ${inputVersion} ChromeDriver does not exist`)
-      }
-      let itemFound = '';
+      let itemFound: string = '';
+
       for (let item of list) {
         // Get a semantic version.
-        let version = item.split('/')[0];
-        if (semver.valid(version) == null) {
-          const lookUpVersion = getValidSemver(version);
+        let version: string = item.split('/')[4];
 
-          if (semver.valid(lookUpVersion)) {
-            // Check to see if the specified version matches.
-            if (lookUpVersion === specificVersion) {
-              // When item found is null, check the os arch
-              // 64-bit version works OR not 64-bit version and the path does not have '64'
-              if (itemFound == '') {
-                if (this.osarch === 'x64' ||
-                    (this.osarch !== 'x64' && !item.includes(this.getOsTypeName() + '64'))) {
-                  itemFound = item;
-                }
-                if (this.osarch === 'arm64' && this.ostype === 'Darwin' && item.includes('m1')) {
-                  itemFound = item;
-                }
-              }
-              // If the semantic version is the same, check os arch.
-              // For 64-bit systems, prefer the 64-bit version.
-              else if (this.osarch === 'x64') {
-                // No win64 version exists, so even on x64 we need to look for win32
-                const osTypeNameAndArch =
-                    this.getOsTypeName() + (this.getOsTypeName() === 'win' ? '32' : '64');
-
-                if (item.includes(osTypeNameAndArch)) {
-                  itemFound = item;
-                }
-              }
-            }
-          }
+        if (inputVersion !== version) {
+          continue;
+        }
+        if (item.includes(this.getOsTypeName()) && item.includes(this.getOsArmName())) {
+          itemFound = item;
+          break;
         }
       }
       if (itemFound == '') {
         return {url: '', version: inputVersion};
       } else {
-        return {url: Config.cdnUrls().chrome + itemFound, version: inputVersion};
+        return {url: itemFound, version: inputVersion};
       }
     });
   }

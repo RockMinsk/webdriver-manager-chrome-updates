@@ -121,9 +121,6 @@ function update(options: Options): Promise<void> {
   let binaries = FileManager.setupBinaries(options[Opt.ALTERNATE_CDN].getString());
   binaries[Standalone.id].versionCustom = options[Opt.VERSIONS_STANDALONE].getString();
   binaries[ChromeDriver.id].versionCustom = options[Opt.VERSIONS_CHROME].getString();
-  if (options[Opt.VERSIONS_IE]) {
-    binaries[IEDriver.id].versionCustom = options[Opt.VERSIONS_IE].getString();
-  }
   if (options[Opt.VERSIONS_GECKO]) {
     binaries[GeckoDriver.id].versionCustom = options[Opt.VERSIONS_GECKO].getString();
   }
@@ -249,7 +246,17 @@ function unzip<T extends Binary>(binary: T, outputDir: string, fileName: string)
   if (fileName.slice(-4) == '.zip') {
     try {
       let zip = new AdmZip(path.resolve(outputDir, fileName));
-      zip.extractAllTo(outputDir, true);
+      if (fileName.indexOf('chromedriver_') != -1) {
+        const zipEntries = zip.getEntries();
+        zipEntries.forEach((zipEntry) => {
+          if (zipEntry.entryName.startsWith('chromedriver-')) {
+            logger.info(`${binary.name}: nested file found - ${zipEntry.entryName}`);
+            zip.extractEntryTo(zipEntry.entryName, outputDir, false, true);
+          }
+        });
+      } else {
+        zip.extractAllTo(outputDir, true);
+      }
     } catch (e) {
       throw new Error(`Invalid filename: ${path.resolve(outputDir, fileName)}`)
     }

@@ -29,8 +29,12 @@ describe('update', () => {
     });
 
     afterEach(() => {
-      rimraf.sync(tmpDir);
-      clearBrowserFile();
+      try {
+        rimraf.sync(tmpDir);
+        clearBrowserFile();
+      } catch (err) {
+        // do nothing, the directory does not exist
+      }
     });
 
     it('should create a file for chrome', (done) => {
@@ -38,7 +42,7 @@ describe('update', () => {
       Config.osArch_ = 'x64';
       argv = {
         '_': ['update'],
-        'versions': {'chrome': '2.20'},
+        'versions': {'chrome': '115.0.5790.170'},
         'standalone': false,
         'gecko': false,
         'out_dir': tmpDir
@@ -48,11 +52,10 @@ describe('update', () => {
             let updateConfig =
                 fs.readFileSync(path.resolve(tmpDir, 'update-config.json')).toString();
             let updateObj = JSON.parse(updateConfig);
-            expect(updateObj['chrome']['last']).toContain('chromedriver_2.20');
+            expect(updateObj['chrome']['last']).toContain('chromedriver_115.0.5790.170');
             expect(updateObj['chrome']['all'].length).toEqual(1);
             expect(updateObj['chrome']['last']).toEqual(updateObj['chrome']['all'][0]);
             expect(updateObj['standalone']).toBeUndefined();
-            expect(updateObj['ie']).toBeUndefined();
             done();
           })
           .catch((err: Error) => {done.fail()});

@@ -9,7 +9,7 @@ webdriver-manager update help
 Overview when you call `update`:
 
 * The output directory is created if it does not exist (`out_dir`)
-* If this is the first time downloading, it will make web requests to selenium-release.storage.googleapis.com, chromedriver.storage.googleapis.com, and api.github.com. The responses will be stored in the `out_dir` as a cache.
+* If this is the first time downloading, it will make web requests to selenium-release.storage.googleapis.com, googlechromelabs.github.io/chrome-for-testing/latest-versions-per-milestone-with-downloads.json, and api.github.com. The responses will be stored in the `out_dir` as a cache.
 * If this is not the first time downloading, it will look at the cached files in `out_dir` and if the file is older than an hour, it will make a request for new files. Note: api.github.com is rate limited by the ip address making the request. This is an issue for common CI systems like Travis or Circle and have an issue opened for this.
 * The response will then be parsed for the url to get the latest version if no version is provided via command line. The latest version will be based on what is available for your OS type and architecture.
 * Next we download the file from the url. If the file already exists (based on content length), we cancel the download.

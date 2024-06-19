@@ -22,7 +22,11 @@ describe('downloader', () => {
       } catch (err) {
         // do nothing, the directory does not exist
       }
-      fs.mkdirSync(outputDir);
+      try {
+        fs.mkdirSync(outputDir);
+      } catch (err) {
+        // do nothing, the directory does not exist
+      }
     });
 
     xit('should download a file with mismatch content length', (done) => {

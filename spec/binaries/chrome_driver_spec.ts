@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as rimraf from 'rimraf';
-import {ChromeDriver} from '../../lib/binaries/chrome_driver';
+import {ChromeDriver} from '../../lib/binaries';
 
 describe('chrome driver', () => {
   let out_dir = path.resolve('selenium_test');
@@ -18,8 +18,8 @@ describe('chrome driver', () => {
     chromeDriver.configSource.out_dir = out_dir;
     chromeDriver.configSource.osarch = 'x64';
     chromeDriver.configSource.ostype = 'Darwin';
-    chromeDriver.getUrl('2.20').then(binaryUrl => {
-      expect(binaryUrl.url).toContain('2.20/chromedriver_mac32.zip');
+    chromeDriver.getUrl('115.0.5790.170').then(binaryUrl => {
+      expect(binaryUrl.url).toContain('115.0.5790.170/mac-x64/chromedriver-mac-x64.zip');
       done();
     });
   });
@@ -31,7 +31,7 @@ describe('chrome driver', () => {
     chromeDriver.configSource.ostype = 'Darwin';
     chromeDriver.getVersionList().then(list => {
       for (let item of list) {
-        expect(item).toContain('chromedriver_mac');
+        expect(item).toContain('chromedriver-mac');
       }
       done();
     });

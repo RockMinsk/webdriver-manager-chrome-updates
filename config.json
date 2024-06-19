@@ -1,7 +1,7 @@
 {
   "webdriverVersions": {
     "selenium": "2.53.1",
-    "chromedriver": "2.27",
+    "chromedriver": "113.0.5672.63",
     "maxChromedriver": "77",
     "geckodriver": "v0.13.0",
     "iedriver": "2.53.1",
@@ -10,7 +10,7 @@
   },
   "cdnUrls": {
     "selenium": "https://selenium-release.storage.googleapis.com/",
-    "chromedriver": "https://chromedriver.storage.googleapis.com/",
+    "chromedriver": "https://googlechromelabs.github.io/chrome-for-testing/latest-versions-per-milestone-with-downloads.json",
     "geckodriver": "https://github.com/mozilla/geckodriver/releases/download/",
     "iedriver": "https://selenium-release.storage.googleapis.com/",
     "androidsdk": "http://dl.google.com/android/"
